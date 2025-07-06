@@ -1,4 +1,5 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { RefreshTokenDto } from './dto/refreshToken.dto';
+import { Body, Controller, HttpException, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/loginAuth.dto';
 import { RegisterAuthDto } from './dto/registerAuth.dto';
@@ -27,5 +28,13 @@ export class AuthController {
   @Post('reset-password')
   async resetPassword(@Body() resetPasswordAuthDto: ResetPasswordAuthDto) {
     return this.authService.resetPassword(resetPasswordAuthDto);
+  }
+
+  @Post('refresh-token')
+  async RefreshTokenDto(@Body() refreshToken: RefreshTokenDto) {
+    if (!refreshToken.token) {
+      throw new HttpException('Refresh token is required', 400);
+    }
+    return this.authService.refreshToken(refreshToken.token);
   }
 }

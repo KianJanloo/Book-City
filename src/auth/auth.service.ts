@@ -10,6 +10,12 @@ import { Repository } from 'typeorm';
 import { Code } from 'src/entities/codes.entity';
 import { ResetPasswordAuthDto } from './dto/resetPasswordAuth.dto';
 
+interface JwtPayload {
+  id: number;
+  email: string;
+  role: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -19,6 +25,7 @@ export class AuthService {
     @InjectRepository(Code)
     private readonly codeRepository: Repository<Code>,
   ) {}
+
   login = async (loginAuthDto: LoginAuthDto) => {
     const user = await this.usersService.getUserByEmail(loginAuthDto.email);
     if (!user) {
@@ -34,15 +41,54 @@ export class AuthService {
       throw new HttpException('Invalid password', 401);
     }
 
-    const accessToken = this.jwtService.sign({
-      id: user.id,
-      role: user.role,
-      email: user.email,
-    });
+    const accessToken = this.jwtService.sign(
+      {
+        id: user.id,
+        role: user.role,
+        email: user.email,
+      },
+      {
+        expiresIn: '1h',
+      },
+    );
+
+    const refreshToken = this.jwtService.sign(
+      {
+        id: user.id,
+        role: user.role,
+        email: user.email,
+      },
+      { expiresIn: '7d' },
+    );
 
     return {
       accessToken,
+      refreshToken,
     };
+  };
+
+  refreshToken = async (refreshToken: string) => {
+    try {
+      const payload = this.jwtService.verify<JwtPayload>(refreshToken);
+
+      const user = await this.usersService.getUserById(payload.id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+
+      const accessToken = this.jwtService.sign(
+        {
+          id: user.id,
+          role: user.role,
+          email: user.email,
+        },
+        { expiresIn: '1h' },
+      );
+
+      return { accessToken };
+    } catch {
+      throw new HttpException('Invalid token', 401);
+    }
   };
 
   register = async (registerAuthDto: RegisterAuthDto) => {
