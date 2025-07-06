@@ -8,6 +8,7 @@ import { JwtStrategy } from './strategies/auth.strategy';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { EmailService } from './email/email.service';
 import { Code } from './entities/codes.entity';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { Code } from './entities/codes.entity';
     }),
     UsersModule,
     AuthModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy, EmailService],
