@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './users.entity';
 
 @Entity()
 export class Product {
@@ -37,4 +44,8 @@ export class Product {
 
   @Column({ nullable: false, default: new Date() })
   updated_at: Date;
+
+  @ManyToMany(() => User, (user) => user.favorites)
+  @JoinTable()
+  favoritedBy: User[];
 }

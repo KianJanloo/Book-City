@@ -9,6 +9,7 @@ import { LoggerMiddleware } from './logger/logger.middleware';
 import { EmailService } from './email/email.service';
 import { Code } from './entities/codes.entity';
 import { ProductsModule } from './products/products.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ProductsModule } from './products/products.module';
     UsersModule,
     AuthModule,
     ProductsModule,
+    FavoritesModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy, EmailService],
