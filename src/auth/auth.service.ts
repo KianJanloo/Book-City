@@ -136,7 +136,6 @@ export class AuthService {
   };
 
   resetPassword = async (resetPasswordAuthDto: ResetPasswordAuthDto) => {
-    console.log(resetPasswordAuthDto);
     const savedCode = await this.codeRepository.findOneBy({
       email: resetPasswordAuthDto.email,
       code: resetPasswordAuthDto.code,
@@ -158,9 +157,6 @@ export class AuthService {
       resetPasswordAuthDto.newPassword,
       10,
     );
-
-    console.log(user);
-    console.log(savedCode.id, hashedPassword);
 
     await this.usersService.changePassword(user.id, hashedPassword);
 

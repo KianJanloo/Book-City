@@ -25,7 +25,6 @@ export class FavoriteService {
   };
 
   findOne = async (userId: number, favoriteId: number) => {
-    console.log(favoriteId);
     const favoriteFounded = await this.favoriteRepository.findOne({
       where: { id: favoriteId },
     });
