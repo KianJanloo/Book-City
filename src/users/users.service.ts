@@ -96,4 +96,19 @@ export class UsersService {
     const newUser = this.userRepository.create(registerAuthDto);
     return await this.userRepository.save(newUser);
   };
+
+  changeRole = async (userId: number, newRole: string) => {
+    const user = await this.getUserById(userId);
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    await this.userRepository.update(userId, {
+      role: newRole,
+      updated_at: new Date(),
+    });
+    return {
+      success: true,
+      message: 'User role successfully updated',
+    };
+  };
 }
