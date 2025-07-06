@@ -13,7 +13,19 @@ export class UsersService {
   ) {}
 
   getUsers = async () => {
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.find({
+      select: [
+        'created_at',
+        'email',
+        'first_name',
+        'id',
+        'last_name',
+        'profilePicture',
+        'role',
+        'updated_at',
+        'username',
+      ],
+    });
     return users;
   };
 
@@ -28,7 +40,20 @@ export class UsersService {
   };
 
   getUserById = async (id: number) => {
-    return await this.userRepository.findOne({ where: { id } });
+    return await this.userRepository.findOne({
+      where: { id },
+      select: [
+        'created_at',
+        'email',
+        'first_name',
+        'id',
+        'last_name',
+        'profilePicture',
+        'role',
+        'updated_at',
+        'username',
+      ],
+    });
   };
 
   findOne = async (id: number) => {
