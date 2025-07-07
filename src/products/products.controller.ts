@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -15,14 +16,18 @@ import { JwtAuthGuard, RolesGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { Request } from 'express';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { OrderDto, PaginationDto, SearchDto } from 'src/common/pagination.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  async findAll() {
-    return await this.productsService.findAll();
+  async findAll(
+    @Query()
+    query: PaginationDto & OrderDto & SearchDto,
+  ) {
+    return await this.productsService.findAll(query);
   }
 
   @Get(':id')

@@ -1,9 +1,11 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/entities/products.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { PaginationDto } from 'src/common/pagination.dto';
+import { orderValidator } from 'src/common/order.validator';
 
 @Injectable()
 export class ProductsService {
@@ -12,13 +14,43 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  getAllProducts = async () => {
-    const products = await this.productRepository.find();
-    return products;
+  getAllProducts = async (
+    query: PaginationDto & {
+      search: string;
+      order: 'ASC' | 'DESC';
+      sort: string;
+    },
+  ) => {
+    const { limit = 10, page = 1, search, order, sort } = query;
+
+    const where = search
+      ? [{ title: ILike(`%${search}%`), description: ILike(`%${search}%`) }]
+      : {};
+
+    const allowedSortFields = ['price', 'created_at', 'title'];
+    const orderBy = orderValidator({ order, sort, allowedSortFields });
+
+    const [products, totalCount] = await this.productRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      where,
+      order: orderBy,
+    });
+
+    return {
+      products,
+      totalCount,
+    };
   };
 
-  findAll = async () => {
-    return await this.getAllProducts();
+  findAll = async (
+    query: PaginationDto & {
+      search: string;
+      order: 'ASC' | 'DESC';
+      sort: string;
+    },
+  ) => {
+    return await this.getAllProducts(query);
   };
 
   getProductById = async (id: number) => {

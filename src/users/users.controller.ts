@@ -2,15 +2,24 @@ import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { ChangeRoleDto } from './dto/changeRole.dto';
 import { EditProfileDto } from './dto/editProfile.dto';
 import { UsersService } from './users.service';
-import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { Roles } from 'src/decorators/role.decorator';
+import { PaginationDto } from 'src/common/pagination.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Get()
-  async getAllUsers() {
-    return await this.usersService.findAll();
+  async getAllUsers(@Query() query: PaginationDto) {
+    return await this.usersService.findAll(query);
   }
 
   @Get(':id')

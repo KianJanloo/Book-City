@@ -4,6 +4,7 @@ import { User } from 'src/entities/users.entity';
 import { Repository } from 'typeorm';
 import { EditProfileDto } from './dto/editProfile.dto';
 import { RegisterAuthDto } from 'src/auth/dto/registerAuth.dto';
+import { PaginationDto } from 'src/common/pagination.dto';
 
 @Injectable()
 export class UsersService {
@@ -12,8 +13,10 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  getUsers = async () => {
-    const users = await this.userRepository.find({
+  getUsers = async (query: PaginationDto) => {
+    console.log(query);
+    const { page = 1, limit = 10 } = query;
+    const [users, totalCount] = await this.userRepository.findAndCount({
       select: [
         'created_at',
         'email',
@@ -25,12 +28,18 @@ export class UsersService {
         'updated_at',
         'username',
       ],
+      skip: (page - 1) * limit,
+      take: limit,
     });
-    return users;
+
+    return {
+      users,
+      totalCount,
+    };
   };
 
-  findAll = async () => {
-    return await this.getUsers();
+  findAll = async (query: PaginationDto) => {
+    return await this.getUsers(query);
   };
 
   getUserByEmail = async (email: string) => {
