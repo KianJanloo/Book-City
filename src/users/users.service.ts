@@ -1,10 +1,11 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/users.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { EditProfileDto } from './dto/editProfile.dto';
 import { RegisterAuthDto } from 'src/auth/dto/registerAuth.dto';
-import { PaginationDto } from 'src/common/pagination.dto';
+import { OrderDto, PaginationDto, SearchDto } from 'src/common/pagination.dto';
+import { orderValidator } from 'src/common/order.validator';
 
 @Injectable()
 export class UsersService {
@@ -13,9 +14,21 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  getUsers = async (query: PaginationDto) => {
-    console.log(query);
-    const { page = 1, limit = 10 } = query;
+  getUsers = async (query: PaginationDto & SearchDto & OrderDto) => {
+    const { page = 1, limit = 10, search, sort, order } = query;
+
+    const where = search
+      ? [
+          {
+            email: ILike(`%${search}%`),
+            username: ILike(`%${search}%`),
+          },
+        ]
+      : {};
+
+    const allowedSortFields = ['created_at'];
+    const orderBy = orderValidator({ sort, order, allowedSortFields });
+
     const [users, totalCount] = await this.userRepository.findAndCount({
       select: [
         'created_at',
@@ -30,6 +43,8 @@ export class UsersService {
       ],
       skip: (page - 1) * limit,
       take: limit,
+      where,
+      order: orderBy,
     });
 
     return {
@@ -38,7 +53,7 @@ export class UsersService {
     };
   };
 
-  findAll = async (query: PaginationDto) => {
+  findAll = async (query: PaginationDto & SearchDto & OrderDto) => {
     return await this.getUsers(query);
   };
 

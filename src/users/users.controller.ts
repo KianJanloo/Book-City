@@ -12,13 +12,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Roles } from 'src/decorators/role.decorator';
-import { PaginationDto } from 'src/common/pagination.dto';
+import { OrderDto, PaginationDto, SearchDto } from 'src/common/pagination.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @Get()
-  async getAllUsers(@Query() query: PaginationDto) {
+  async getAllUsers(@Query() query: PaginationDto & SearchDto & OrderDto) {
     return await this.usersService.findAll(query);
   }
 
