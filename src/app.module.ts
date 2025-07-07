@@ -10,6 +10,7 @@ import { EmailService } from './email/email.service';
 import { Code } from './entities/codes.entity';
 import { ProductsModule } from './products/products.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { FavoritesModule } from './favorites/favorites.module';
     AuthModule,
     ProductsModule,
     FavoritesModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy, EmailService],
