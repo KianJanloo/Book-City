@@ -21,7 +21,7 @@ export class Product {
   @Column({ nullable: false })
   description: string;
 
-  @Column('text', { nullable: false, array: true })
+  @Column('text', { nullable: true, array: true, default: null })
   photos: string[];
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })

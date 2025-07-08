@@ -121,4 +121,26 @@ export class ProductsService {
       message: 'Product deleted successfully.',
     };
   };
+
+  uploadPhotos = async (id: number, photos: Express.Multer.File[]) => {
+    const product = await this.getProductById(id);
+    if (!product) {
+      throw new HttpException('Product not found.', 404);
+    }
+
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+
+    const existingPhotos = product.photos || [];
+    const updatedPhotos = [
+      ...existingPhotos,
+      ...photos.map((photo) => baseUrl + '/' + photo.path),
+    ];
+
+    await this.productRepository.update(id, { photos: updatedPhotos });
+
+    return {
+      success: true,
+      message: 'Photos uploaded successfully.',
+    };
+  };
 }

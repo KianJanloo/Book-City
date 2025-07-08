@@ -8,7 +8,9 @@ import {
   Put,
   Query,
   Req,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -17,6 +19,8 @@ import { Roles } from 'src/decorators/role.decorator';
 import { Request } from 'express';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { OrderDto, PaginationDto, SearchDto } from 'src/common/pagination.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/helper/profilePicture.config';
 
 @Controller('products')
 export class ProductsController {
@@ -45,6 +49,17 @@ export class ProductsController {
     const userId = req.user.id;
     createProductDto.userId = userId;
     return await this.productsService.create(createProductDto);
+  }
+
+  @Put('upload-photos/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @UseInterceptors(FilesInterceptor('photos', 5, multerConfig))
+  uploadPhotos(
+    @UploadedFiles() files: Express.Multer.File[],
+    @Param('id') productId: number,
+  ) {
+    return this.productsService.uploadPhotos(productId, files);
   }
 
   @Put(':id')
