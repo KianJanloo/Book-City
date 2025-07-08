@@ -7,12 +7,18 @@ import {
   Controller,
   Get,
   Param,
+  Post,
   Put,
   Query,
+  Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Roles } from 'src/decorators/role.decorator';
 import { OrderDto, PaginationDto, SearchDto } from 'src/common/pagination.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/helper/profilePicture.config';
 
 @Controller('users')
 export class UsersController {
@@ -44,5 +50,15 @@ export class UsersController {
     @Body() changeRoleDto: ChangeRoleDto,
   ) {
     return await this.usersService.changeRole(id, changeRoleDto.role);
+  }
+
+  @Post('upload-profilePicture')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file', multerConfig))
+  async updateProfilePicture(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request & { user: { id: number } },
+  ) {
+    return await this.usersService.updateProfilePicture(req.user.id, file);
   }
 }

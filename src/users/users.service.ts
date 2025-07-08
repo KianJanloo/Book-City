@@ -135,4 +135,22 @@ export class UsersService {
       message: 'User role successfully updated',
     };
   };
+
+  updateProfilePicture = async (userId: number, file: Express.Multer.File) => {
+    if (!file) {
+      throw new HttpException('No file provided', 400);
+    }
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const pathFile = file.path.replace(/\\/g, '/');
+
+    await this.userRepository.update(userId, {
+      profilePicture: baseUrl + '/' + pathFile,
+      updated_at: new Date(),
+    });
+
+    return {
+      success: true,
+      message: 'User profile picture successfully updated',
+    };
+  };
 }
