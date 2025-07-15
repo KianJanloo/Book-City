@@ -14,6 +14,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ContactModule } from './contact/contact.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ContactModule } from './contact/contact.module';
     FavoritesModule,
     DashboardModule,
     ContactModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy, EmailService],
