@@ -1,5 +1,12 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Product } from './products.entity';
+import { Message } from './messages.entity';
 
 @Entity()
 export class User {
@@ -35,4 +42,7 @@ export class User {
 
   @ManyToMany(() => Product, (product) => product.favoritedBy)
   favorites: Product[];
+
+  @OneToMany(() => Message, (message) => message.userId)
+  messages: Message[];
 }

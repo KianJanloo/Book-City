@@ -13,6 +13,7 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     ProductsModule,
     FavoritesModule,
     DashboardModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy, EmailService],
