@@ -24,6 +24,7 @@ More features coming soon...
 - **Create product** — `POST /products`
 - **Update product** — `PUT /products/:id`
 - **Delete product** — `DELETE /products/:id`
+- **Upload Photos** - `PUT /products/upload-photos/:id`
 
 ---
 
@@ -40,8 +41,9 @@ More features coming soon...
 
 - **Get all users** — `GET /users`
 - **Get user by ID** — `GET /users/:id`
-- **Edit profile** — `PATCH /users/:id`
-- **Change Role** — `PATCH /users/change-profile/:id`
+- **Edit profile** — `PUT /users/:id`
+- **Change Role** — `PUT /users/change-profile/:id`
+- **Upload Profile Picture** - `POST /users/upload-profilePicture`
 
 ---
 
@@ -52,6 +54,7 @@ More features coming soon...
 - **JWT** — authentication
 - **Bcrypt** — password hashing
 - **Nodemailer** — email service
+- **Multer** - upload picture & file
 
 ---
 
