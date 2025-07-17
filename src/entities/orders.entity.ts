@@ -1,4 +1,3 @@
-import { Cart } from 'src/entities/cart.entity';
 import { User } from 'src/entities/users.entity';
 import {
   Column,
@@ -19,16 +18,12 @@ export class Order {
   @Column({ nullable: false })
   userId: number;
 
-  @ManyToOne(() => Cart)
-  @JoinColumn({ name: 'cartId' })
-  cart: Cart;
+  @Column({ type: 'json', nullable: false, default: [] })
+  books: any[];
 
   @Column({ nullable: false })
   cartId: number;
 
-  @Column({
-    nullable: false,
-    default: 'pending',
-  })
-  paymentStatus: string;
+  @Column({ nullable: false, default: new Date() })
+  date: Date;
 }
