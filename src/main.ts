@@ -2,7 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as passport from 'passport';
 import * as session from 'express-session';
+import * as express from 'express';
 import { ValidationPipe } from '@nestjs/common';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +17,8 @@ async function bootstrap() {
       saveUninitialized: false,
     }),
   );
+
+  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   app.use(passport.initialize());
   app.use(passport.session());
