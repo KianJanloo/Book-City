@@ -47,6 +47,33 @@ More features coming soon...
 
 ---
 
+### 🛒 Cart
+- **Add To Cart** — `POST /cart/add/:productId/:userId`
+- **Get Cart By User ID** — `GET /cart/:userId`
+- **Remove Book From Cart** — `DELETE /cart/remove/:productId/:cartId`
+- **Clear Cart** — `DELETE /cart/clear/:cartId`
+
+---
+
+### 📚 Orders
+- **Create Order** — `POST /orders/:cartId`
+- **Get Order By ID** — `GET /orders/:id`
+- **Get All Orders By User ID** — `GET /orders/user/:userId`
+- **Delete Order By ID** — `DELETE /orders/:id`
+
+---
+
+### 💵 Payments
+- **Get All Payments** — `GET /payments`
+- **Get Payments Of User** — `GET /payments/user/:userId`
+- **Create Payment** — `POST /payments`
+- **Update Payment** — `PUT /payments/:id`
+- **Get Payment By ID** — `GET /payments/:id`
+- **Reject Payment** — `PUT /payments/:id/reject`
+- **Accept Payment** — `PUT /payments/:id/accept`
+
+---
+
 ## ⚙️ Technologies
 
 - **NestJS** — main backend framework
