@@ -27,7 +27,7 @@ import { PaymentsModule } from './payments/payments.module';
     TypeOrmModule.forFeature([Code]),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'book-city.onrender',
+      host: 'book-city.onrender.com',
       port: 5432,
       username: 'postgres',
       password: '1388ki8831',
