@@ -19,6 +19,7 @@ import { Roles } from 'src/decorators/role.decorator';
 import { OrderDto, PaginationDto, SearchDto } from 'src/common/pagination.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/helper/profilePicture.config';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -35,6 +36,7 @@ export class UsersController {
 
   @Put(':id')
   @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: EditProfileDto })
   async updateUser(
     @Param('id') id: number,
     @Body() editProfileDto: Partial<EditProfileDto>,
