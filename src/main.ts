@@ -8,12 +8,14 @@ import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['debug', 'error', 'log', 'warn'],
+  });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const config = new DocumentBuilder()
     .setTitle('Book City')
-    .setVersion('1')
+    .setVersion('1.0')
     .addBearerAuth()
     .build();
 

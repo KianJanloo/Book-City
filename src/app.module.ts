@@ -17,9 +17,37 @@ import { ContactModule } from './contact/contact.module';
 import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentsModule } from './payments/payments.module';
+import * as winston from 'winston';
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
 
 @Module({
   imports: [
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.colorize(),
+            nestWinstonModuleUtilities.format.nestLike('BookCity', {
+              colors: true,
+              prettyPrint: true,
+            }),
+          ),
+        }),
+
+        new winston.transports.File({
+          filename: 'logs/error.log',
+          level: 'error',
+        }),
+
+        new winston.transports.File({
+          filename: 'logs/combined.log',
+        }),
+      ],
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',

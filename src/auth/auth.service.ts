@@ -1,5 +1,5 @@
 import { LoginAuthDto } from './dto/loginAuth.dto';
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { RegisterAuthDto } from './dto/registerAuth.dto';
 import * as bcrypt from 'bcryptjs';
@@ -9,6 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Code } from 'src/entities/codes.entity';
 import { ResetPasswordAuthDto } from './dto/resetPasswordAuth.dto';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 interface JwtPayload {
   id: number;
@@ -19,6 +21,7 @@ interface JwtPayload {
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly emailService: EmailService,
@@ -61,6 +64,7 @@ export class AuthService {
       { expiresIn: '7d' },
     );
 
+    this.logger.info(`User with email: ${loginAuthDto.email} Login`);
     return {
       accessToken,
       refreshToken,
