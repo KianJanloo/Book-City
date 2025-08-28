@@ -14,7 +14,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  getUsers = async (query: PaginationDto & SearchDto & OrderDto) => {
+  async getUsers(query: PaginationDto & SearchDto & OrderDto) {
     const { page = 1, limit = 10, search, sort, order } = query;
 
     const where = search
@@ -51,7 +51,7 @@ export class UsersService {
       users,
       totalCount,
     };
-  };
+  }
 
   findAll = async (query: PaginationDto & SearchDto & OrderDto) => {
     return await this.getUsers(query);
