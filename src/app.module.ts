@@ -23,9 +23,16 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60,
+        limit: 10,
+      },
+    ]),
     ScheduleModule.forRoot(),
     WinstonModule.forRoot({
       transports: [

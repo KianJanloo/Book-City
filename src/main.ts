@@ -6,11 +6,20 @@ import * as express from 'express';
 import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['debug', 'error', 'log', 'warn'],
   });
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://book-city-production.up.railway.app',
+    ],
+    credentials: true,
+  });
+  app.use(helmet());
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   const config = new DocumentBuilder()
