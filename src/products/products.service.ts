@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/entities/products.entity';
 import { ILike, Repository } from 'typeorm';
@@ -6,12 +6,18 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from 'src/common/pagination.dto';
 import { orderValidator } from 'src/common/order.validator';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   getAllProducts = async (
@@ -143,4 +149,16 @@ export class ProductsService {
       message: 'Photos uploaded successfully.',
     };
   };
+
+  async getProductCache() {
+    this.logger.info('Products called.');
+    let products = await this.cacheManager.get('products');
+
+    if (!products) {
+      products = [{ title: 'Potato', describe: 'Yummy...', id: 1 }];
+      await this.cacheManager.set('products', products);
+    }
+
+    return products;
+  }
 }

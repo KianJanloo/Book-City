@@ -21,6 +21,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { OrderDto, PaginationDto, SearchDto } from 'src/common/pagination.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/helper/profilePicture.config';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @Controller('products')
 export class ProductsController {
@@ -77,5 +78,11 @@ export class ProductsController {
   @Roles('admin')
   async delete(@Param('id') id: string) {
     return await this.productsService.delete(Number(id));
+  }
+
+  @Get('cache/use')
+  @UseInterceptors(CacheInterceptor)
+  async cacheProducts() {
+    return await this.productsService.getProductCache();
   }
 }
