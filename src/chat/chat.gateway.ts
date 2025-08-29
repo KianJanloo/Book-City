@@ -1,45 +1,63 @@
-import { Inject } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Server, Socket } from 'socket.io';
-import { Logger } from 'winston';
 
-@WebSocketGateway({ cors: true })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(
-    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
-  ) {}
-
+@WebSocketGateway({ cors: { origin: '*' } })
+export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('send-message')
-  handleMessage(
-    @MessageBody() message: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    try {
-      this.logger.info(`new message from { ${client.id} }: ${message}`);
-
-      this.server.emit('new_message', message);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   handleConnection(client: Socket) {
-    console.log(`✅ کاربر وصل شد: ${client.id}`);
+    console.log('Client connected:', client.id);
+    client.emit('connected', `${client.id} connected`);
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`❌ کاربر خارج شد: ${client.id}`);
+    console.log('Client disconnected:', client.id);
+    client.emit('disconnected', `${client.id} disconnected`);
+  }
+
+  @SubscribeMessage('joinRoom')
+  async joinRoom(
+    @MessageBody() { room }: { room: string },
+    @ConnectedSocket() client: Socket,
+  ): Promise<void> {
+    try {
+      await client.join(room);
+      client.emit('joined', `You entered ${room} room`);
+      console.log(`You entered ${room} room`);
+    } catch (error) {
+      console.error('Error joining room:', error);
+    }
+  }
+
+  @SubscribeMessage('messageToRoom')
+  sendToRoom(
+    @MessageBody() { room, message }: { room: string; message: string },
+  ): void {
+    try {
+      this.server.to(room).emit('message', message);
+      console.log(`message: ${message} to ${room} room`);
+    } catch (error) {
+      console.error('Error sending message to room:', error);
+    }
+  }
+
+  @SubscribeMessage('privateMessage')
+  sendPrivate(
+    @MessageBody() { to, message }: { to: string; message: string },
+    @ConnectedSocket() client: Socket,
+  ): void {
+    try {
+      this.server.to(to).emit('private', { from: client.id, message });
+      console.log(`message: ${message} to ${to}`);
+    } catch (error) {
+      console.error('Error sending private message:', error);
+    }
   }
 }

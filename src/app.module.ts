@@ -24,6 +24,7 @@ import {
 } from 'nest-winston';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -83,7 +84,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     PaymentsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtStrategy, EmailService],
+  providers: [AppService, JwtStrategy, EmailService, ChatGateway],
   exports: [EmailService],
 })
 export class AppModule implements NestModule {
